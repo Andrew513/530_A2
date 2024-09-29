@@ -6,7 +6,7 @@
 
 typedef shared_ptr <MyDB_PageRecordIterator> MyDB_PageRecordIteratorPtr;
 
-class MyDB_PageRecordIterator : MyDB_RecordIterator
+class MyDB_PageRecordIterator : public MyDB_RecordIterator
 {
 private:
     
@@ -14,9 +14,9 @@ public:
     MyDB_PageRecordIterator();
     ~MyDB_PageRecordIterator();
 
-    void getNext() override {};
+    void getNext() {};
 
-    bool hasNext() override {};
+    bool hasNext() {};
 };
 
 #endif

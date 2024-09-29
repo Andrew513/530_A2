@@ -5,6 +5,13 @@
 #include "MyDB_PageType.h"
 #include "MyDB_TableReaderWriter.h"
 
+struct PageHeader {
+	size_t nextAvailablePlace;
+	size_t numBytesUsed;
+	MyDB_PageType type;
+	char bytes[0];
+};
+
 class MyDB_PageReaderWriter {
 
 public:
@@ -35,6 +42,8 @@ private:
 
 	// ANYTHING ELSE YOU WANT HERE
 	MyDB_PageType type;
+	MyDB_PagePtr page;
+	MyDB_BufferManagerPtr buffer;
 };
 
 #endif
