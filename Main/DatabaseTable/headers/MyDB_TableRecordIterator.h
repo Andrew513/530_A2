@@ -6,6 +6,7 @@
 #include "MyDB_Table.h"
 #include "MyDB_PageReaderWriter.h"
 
+class MyDB_TableRecordIterator;
 typedef shared_ptr <MyDB_TableRecordIterator> MyDB_TableRecordIteratorPtr;
 
 class MyDB_TableRecordIterator : public MyDB_RecordIterator

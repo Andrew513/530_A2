@@ -8,7 +8,7 @@
 #include "MyDB_PageReaderWriter.h"
 #include "MyDB_TableReaderWriter.h"
 #include "MyDB_TableRecordIterator.h"
-#include "MyDB_Record.h";
+#include "MyDB_Record.h"
 
 using namespace std;
 
@@ -68,8 +68,7 @@ void MyDB_TableReaderWriter :: loadFromTextFile (string fromMe) {
 }
 
 MyDB_RecordIteratorPtr MyDB_TableReaderWriter :: getIterator (MyDB_RecordPtr iterateIntoMe) {
-	MyDB_TableRecordIteratorPtr tableRecIter = make_shared<MyDB_TableRecordIterator>(iterateIntoMe);
-	return tableRecIter;
+	return make_shared<MyDB_TableRecordIterator>(iterateIntoMe, table, buffer);
 }
 
 void MyDB_TableReaderWriter :: writeIntoTextFile (string toMe) {

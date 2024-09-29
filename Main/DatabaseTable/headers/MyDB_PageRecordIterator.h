@@ -9,6 +9,8 @@ class MyDB_PageRecordIterator;
 typedef shared_ptr <MyDB_PageRecordIterator> MyDB_PageRecordIteratorPtr;
 
 
+struct PageHeader;
+
 class MyDB_PageRecordIterator : public MyDB_RecordIterator
 {
 private:
