@@ -30,7 +30,6 @@ public:
     char* getCurrentRecordLocation() {};
 
     void advanceToNextRecord() {};
-    adfs
     
 };
 
