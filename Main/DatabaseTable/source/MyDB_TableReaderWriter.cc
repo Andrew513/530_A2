@@ -5,6 +5,7 @@
 #include <fstream>
 #include "MyDB_PageReaderWriter.h"
 #include "MyDB_TableReaderWriter.h"
+#include "MyDB_Record.h";
 
 using namespace std;
 
@@ -17,7 +18,8 @@ MyDB_PageReaderWriter MyDB_TableReaderWriter :: operator [] (size_t) {
 }
 
 MyDB_RecordPtr MyDB_TableReaderWriter :: getEmptyRecord () {
-	return nullptr;
+	MyDB_RecordPtr emptyRec = make_shared<MyDB_Record>(nullptr);
+	return emptyRec;
 }
 
 MyDB_PageReaderWriter MyDB_TableReaderWriter :: last () {

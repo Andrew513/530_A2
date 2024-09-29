@@ -34,6 +34,7 @@ public:
 private:
 
 	// ANYTHING ELSE YOU WANT HERE
+	MyDB_PageType type;
 };
 
 #endif
