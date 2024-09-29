@@ -21,7 +21,7 @@ private:
     size_t currentSize;
     
 public:
-    MyDB_PageRecordIterator(MyDB_PageHandle pageHandler, MyDB_BufferManagerPtr buffer);
+    MyDB_PageRecordIterator(MyDB_PageHandle pageHandler, MyDB_RecordPtr iterateIntoMe);
     ~MyDB_PageRecordIterator();
 
     void getNext();
@@ -33,7 +33,7 @@ public:
     char* getCurrentRecordLocation();
 
     void advanceToNextRecord();
-    
+
 };
 
 #endif

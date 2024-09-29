@@ -27,8 +27,8 @@ void MyDB_PageRecordIterator::advanceToNextRecord() {
     currentSize += record->getBinarySize();
 }
 
-MyDB_PageRecordIterator::MyDB_PageRecordIterator(MyDB_PageHandle pageHandler, MyDB_BufferManagerPtr buffer) 
-    : pageHandler(pageHandler), buffer(buffer), currentSize(0) {}
+MyDB_PageRecordIterator::MyDB_PageRecordIterator(MyDB_PageHandle pageHandler, MyDB_RecordPtr iterateIntoMe) 
+    : pageHandler(pageHandler), record(iterateIntoMe), currentSize(0) {}
 
 MyDB_PageRecordIterator :: ~MyDB_PageRecordIterator() {
 
