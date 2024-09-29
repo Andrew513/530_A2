@@ -6,9 +6,13 @@
 #include "MyDB_TableReaderWriter.h"
 
 struct PageHeader {
+	// the next available place to write a record
 	size_t nextAvailablePlace;
+	// the number of bytes used on the page
 	size_t numBytesUsed;
+	// the type of the page
 	MyDB_PageType type;
+	// record starting point
 	char bytes[0];
 };
 
@@ -37,11 +41,14 @@ public:
 
 	// sets the type of the page
 	void setType (MyDB_PageType toMe);
+
+	MyDB_PageReaderWriter (MyDB_PagePtr page, MyDB_BufferManagerPtr buffer);
+
+	PageHeader* getPageHeader();
 	
 private:
 
 	// ANYTHING ELSE YOU WANT HERE
-	MyDB_PageType type;
 	MyDB_PagePtr page;
 	MyDB_BufferManagerPtr buffer;
 };
