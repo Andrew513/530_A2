@@ -45,6 +45,8 @@ public:
 	MyDB_PageReaderWriter (long i, MyDB_BufferManagerPtr buffer, MyDB_TablePtr table);
 
 	PageHeader* getPageHeader();
+
+	void overWrite(char* overwriteMe[], int pageSize);
 	
 private:
 

@@ -39,6 +39,14 @@ bool MyDB_PageReaderWriter :: append (MyDB_RecordPtr appendMe) {
 	return true;
 }
 
+void MyDB_PageReaderWriter::overWrite(char* overwriteMe[], int pageSize) {
+	PageHeader *header = getPageHeader();
+	header->nextAvailablePlace = 0;
+	header->numBytesUsed = pageSize;
+	header->type = MyDB_PageType :: RegularPage;
+	memcpy(header->bytes, overwriteMe, pageSize);
+}
+
 PageHeader* MyDB_PageReaderWriter::getPageHeader() {
     return (PageHeader*) pageHandler->getBytes();
 }
