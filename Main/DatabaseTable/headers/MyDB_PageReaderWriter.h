@@ -42,15 +42,17 @@ public:
 	// sets the type of the page
 	void setType (MyDB_PageType toMe);
 
-	MyDB_PageReaderWriter (MyDB_PagePtr page, MyDB_BufferManagerPtr buffer);
+	MyDB_PageReaderWriter (long i, MyDB_BufferManagerPtr buffer, MyDB_TablePtr table);
 
 	PageHeader* getPageHeader();
 	
 private:
 
 	// ANYTHING ELSE YOU WANT HERE
-	MyDB_PagePtr page;
+	long index;
 	MyDB_BufferManagerPtr buffer;
+	MyDB_TablePtr table;
+	MyDB_PageHandle pageHandler;
 };
 
 #endif

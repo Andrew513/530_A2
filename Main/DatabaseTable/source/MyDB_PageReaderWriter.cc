@@ -18,7 +18,7 @@ MyDB_PageType MyDB_PageReaderWriter :: getType () {
 
 MyDB_RecordIteratorPtr MyDB_PageReaderWriter :: getIterator (MyDB_RecordPtr iterateIntoMe) {
 	// return a new iterator
-	return make_shared<MyDB_PageRecordIterator>(page, iterateIntoMe);
+	return make_shared<MyDB_PageRecordIterator>(pageHandler, iterateIntoMe);
 }
 
 void MyDB_PageReaderWriter :: setType (MyDB_PageType toMe) {
@@ -28,21 +28,23 @@ void MyDB_PageReaderWriter :: setType (MyDB_PageType toMe) {
 bool MyDB_PageReaderWriter :: append (MyDB_RecordPtr appendMe) {
 	PageHeader *header = getPageHeader();
 	size_t recordSize = appendMe->getBinarySize();
-	size_t pageSize = page->getParent().getPageSize();
+	size_t pageSize = buffer->getPageSize();
 	if(header->nextAvailablePlace + recordSize > pageSize) {
 		return false;
 	}
 	appendMe->toBinary((char*)header->bytes[header->nextAvailablePlace]);
 	header->nextAvailablePlace += recordSize;
 	header->numBytesUsed += recordSize;
-	page->wroteBytes();
+	pageHandler->wroteBytes();
 	return true;
 }
 
 PageHeader* MyDB_PageReaderWriter::getPageHeader() {
-    return (PageHeader*) page->getBytes(page);
+    return (PageHeader*) pageHandler->getBytes();
 }
 
-MyDB_PageReaderWriter :: MyDB_PageReaderWriter (MyDB_PagePtr page, MyDB_BufferManagerPtr buffer):page(page), buffer(buffer) {}
+MyDB_PageReaderWriter :: MyDB_PageReaderWriter (long i, MyDB_BufferManagerPtr buffer, MyDB_TablePtr table):index(i), buffer(buffer), table(table) {
+	pageHandler = buffer->getPage(table, index);
+}
 
 #endif

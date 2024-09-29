@@ -15,7 +15,7 @@ bool MyDB_PageRecordIterator::hasNext() {
 }
 
 PageHeader* MyDB_PageRecordIterator::getPageHeader() {
-    return (PageHeader*) page->getBytes(page);
+    return (PageHeader*) pageHandler->getBytes();
 }
 
 char* MyDB_PageRecordIterator::getCurrentRecordLocation() {
@@ -27,8 +27,8 @@ void MyDB_PageRecordIterator::advanceToNextRecord() {
     currentSize += record->getBinarySize();
 }
 
-MyDB_PageRecordIterator::MyDB_PageRecordIterator(MyDB_PagePtr page, MyDB_BufferManagerPtr buffer) 
-    : page(page), buffer(buffer), currentSize(0) {}
+MyDB_PageRecordIterator::MyDB_PageRecordIterator(MyDB_PageHandle pageHandler, MyDB_BufferManagerPtr buffer) 
+    : pageHandler(pageHandler), buffer(buffer), currentSize(0) {}
 
 MyDB_PageRecordIterator :: ~MyDB_PageRecordIterator() {
 
