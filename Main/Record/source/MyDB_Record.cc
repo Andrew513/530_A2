@@ -802,10 +802,10 @@ void *MyDB_Record :: fromBinary (void *fromHere) {
 
 void MyDB_Record :: fromString (string res) {	
 	int i = 0;
-        for (int pos = 0; pos < (int) res.size (); pos = (int) res.find ("|", pos + 1) + 1) {
-                string temp = res.substr (pos, res.find ("|", pos + 1) - pos);
+	for (int pos = 0; pos < (int) res.size (); pos = (int) res.find ("|", pos + 1) + 1) {
+		string temp = res.substr (pos, res.find ("|", pos + 1) - pos);
 		values[i++]->fromString (temp);
-        }
+	}
 	bufferOld = true;
 }
 
