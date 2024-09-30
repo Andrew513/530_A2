@@ -27,9 +27,14 @@ void MyDB_TableRecordIterator::getNext() {
 }
 
 bool MyDB_TableRecordIterator::hasNext() {
+    //return true if there is another record in the file
     // in the last page and does not has enough space for storing record
     if (curPageId == table->lastPage() && !curPageRecIter->hasNext()) 
         return false;
+
+    // TODO:need to check page by page, if all pages before last page are full, return false
+    // if there is a page that is not full, call pagerecorditerator to check if there is a record
+    // than return true
 
     return true;
 }
