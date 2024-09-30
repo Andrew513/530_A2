@@ -35,28 +35,43 @@ bool MyDB_PageReaderWriter :: append (MyDB_RecordPtr appendMe) {
 	if(header->nextAvailablePlace + recordSize > pageSize) {
 		return false;
 	}
-	appendMe->toBinary((char*)header->bytes[header->nextAvailablePlace]);
+
+	// cout << "rec size: " << recordSize << ", " << pageSize << endl; 
+	// cout << "before append: " << header->nextAvailablePlace << endl;
+	
+	appendMe->toBinary((void*)(header->bytes + header->nextAvailablePlace));
 	header->nextAvailablePlace += recordSize;
 	header->numBytesUsed += recordSize;
 	pageHandler->wroteBytes();
+	table->setLastPage(index);
+	
+	// cout << "after append: " << header->nextAvailablePlace << endl;
 	return true;
 }
 
-void MyDB_PageReaderWriter::overWrite(char* overwriteMe, int pageSize) {
-	PageHeader *header = getPageHeader();
-	header->nextAvailablePlace = 0;
-	header->numBytesUsed = pageSize;
-	header->type = MyDB_PageType :: RegularPage;
-	cout << "to copy: " << overwriteMe << endl;
-	memcpy(header->bytes, overwriteMe, pageSize);
-}
-
 PageHeader* MyDB_PageReaderWriter::getPageHeader() {
-    return (PageHeader*) pageHandler->getBytes();
+	PageHeader *header = (PageHeader*)pageHandler->getBytes();
+    return header;
 }
 
 MyDB_PageReaderWriter :: MyDB_PageReaderWriter (long i, MyDB_BufferManagerPtr buffer, MyDB_TablePtr table):index(i), buffer(buffer), table(table) {
 	pageHandler = buffer->getPage(table, index);
+	
+	PageHeader *header = (PageHeader*)pageHandler->getBytes();
+	cout << "set to 0\n";
+	header->nextAvailablePlace = 0;
+	header->numBytesUsed = 0;
+	header->type = MyDB_PageType :: RegularPage;
 }
 
 #endif
+
+// void MyDB_PageReaderWriter::overWrite(char* overwriteMe, int pageSize) {
+// 	PageHeader *header = getPageHeader();
+// 	header->nextAvailablePlace = 0;
+// 	header->numBytesUsed = pageSize;
+// 	header->type = MyDB_PageType :: RegularPage;
+// 	memcpy(header->bytes, overwriteMe, pageSize);
+// }
+
+

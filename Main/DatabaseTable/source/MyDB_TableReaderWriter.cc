@@ -31,7 +31,7 @@ MyDB_PageReaderWriter MyDB_TableReaderWriter :: operator [] (size_t i) {
 }
 
 MyDB_RecordPtr MyDB_TableReaderWriter :: getEmptyRecord () {
-	MyDB_RecordPtr emptyRec = make_shared<MyDB_Record>(nullptr);
+	MyDB_RecordPtr emptyRec = make_shared<MyDB_Record>(table->getSchema());
 	return emptyRec;
 }
 
@@ -43,8 +43,17 @@ MyDB_PageReaderWriter MyDB_TableReaderWriter :: last () {
 
 
 void MyDB_TableReaderWriter :: append (MyDB_RecordPtr appendMe) {
-	if (!last().append(appendMe)) {
-		cout << "Failed to append record\n";
+	if (table->lastPage() == -1) {
+		table->setLastPage(0);
+	}
+
+	MyDB_PageReaderWriter lastPage = last();
+	if (!(lastPage.append(appendMe))) {
+		// no enough space for appending record, need to use a new page
+		table->setLastPage(table->lastPage() + 1);
+		MyDB_PageReaderWriter newLastPage = last();
+		newLastPage.append(appendMe);
+		return;
 	}
 }
 
@@ -52,7 +61,7 @@ void MyDB_TableReaderWriter :: loadFromTextFile (string fromMe) {
 	// load a text file into this table... overwrites the current contents
 	ifstream infile(fromMe);
 	if (!infile.is_open()) {
-		cerr << "Failed to open the file: " << fromMe << endl;
+		cout << "Failed to open the file: " << fromMe << endl;
 		return;
 	}
 

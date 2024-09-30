@@ -12,6 +12,8 @@
         "set": "cpp",
         "stack": "cpp",
         "unordered_map": "cpp",
-        "vector": "cpp"
+        "vector": "cpp",
+        "string": "cpp",
+        "iostream": "cpp"
     }
 }

@@ -1,6 +1,9 @@
 #include "MyDB_TableRecordIterator.h"
 #include "MyDB_Table.h"
 #include "MyDB_PageReaderWriter.h"
+#include <iostream>
+
+using namespace std;
 
 MyDB_TableRecordIterator::MyDB_TableRecordIterator(MyDB_RecordPtr recordIn, MyDB_TablePtr tableIn, MyDB_BufferManagerPtr bufferIn): 
         record(recordIn), table(tableIn), buffer(bufferIn) {
