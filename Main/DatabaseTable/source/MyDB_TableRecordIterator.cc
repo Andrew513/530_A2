@@ -17,24 +17,36 @@ MyDB_TableRecordIterator::~MyDB_TableRecordIterator() {
 }
 
 void MyDB_TableRecordIterator::getNext() {
-    if (!hasNext()) return;
-    if (!curPageRecIter->hasNext()) {
-        curPageId++;
-        curPageWR = new MyDB_PageReaderWriter(curPageId, buffer, table);
-        curPageRecIter = curPageWR->getIterator(record);
-    }
-    curPageRecIter->getNext();
+    return curPageRecIter->getNext();
 }
 
 bool MyDB_TableRecordIterator::hasNext() {
     //return true if there is another record in the file
     // in the last page and does not has enough space for storing record
-    if (curPageId == table->lastPage() && !curPageRecIter->hasNext()) 
-        return false;
+
+    // if (curPageId == table->lastPage() && !curPageRecIter->hasNext()) 
+    //     return false;
 
     // TODO:need to check page by page, if all pages before last page are full, return false
     // if there is a page that is not full, call pagerecorditerator to check if there is a record
     // than return true
+    while(curPageId <= table->lastPage()) {
+        //check cur page has next or not
+        if(curPageRecIter->hasNext()) {
+            return true;
+        //if cur page does not have next, check next page
+        } else {
+            curPageId++;
+            if(curPageId <= table->lastPage()) {
+                shared_ptr <MyDB_PageReaderWriter> curPageWR = make_shared<MyDB_PageReaderWriter>(curPageId, buffer, table);
+                curPageRecIter = curPageWR->getIterator(record);
+            }
+        }
+        //if all pages are full, return false
+        // if(curPageId == table->lastPage()) {
+        //     return curPageRecIter->hasNext();
+        // }
+    }
 
-    return true;
+    return false;
 }
