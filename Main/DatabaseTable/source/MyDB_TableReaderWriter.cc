@@ -5,6 +5,7 @@
 #include <fstream>
 #include <fcntl.h>
 #include <unistd.h>
+#include <iostream>
 #include "MyDB_PageReaderWriter.h"
 #include "MyDB_TableReaderWriter.h"
 #include "MyDB_TableRecordIterator.h"
@@ -54,15 +55,15 @@ void MyDB_TableReaderWriter :: loadFromTextFile (string fromMe) {
 		return;
 	}
 
-	char readBuffer[pageSize];
+	char *readBuffer;
+	readBuffer = (char*)malloc(pageSize);
 	ssize_t bytesRead;
-	long curPageId = 0, lastPageId = table->lastPage();
-	while ((bytesRead == read(fd, readBuffer, pageSize)) > 0 || curPageId <= lastPageId) {
+	long curPageId = 0;
+	while ((bytesRead = read(fd, readBuffer, pageSize)) > 0) {
 		MyDB_PageReaderWriter pageRW(curPageId, buffer, table); // use curPageId to determine which page is pointed to
-		
 		// overwrite page content
-		// pageRW->overwrite(buffer);
-		
+		cout << "copy first: " << readBuffer << endl;
+		pageRW.overWrite(readBuffer, pageSize);
 		curPageId++;
 	}
 }

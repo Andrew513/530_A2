@@ -46,7 +46,7 @@ public:
 
 	PageHeader* getPageHeader();
 
-	void overWrite(char* overwriteMe[], int pageSize);
+	void overWrite(char* overwriteMe, int pageSize);
 	
 private:
 

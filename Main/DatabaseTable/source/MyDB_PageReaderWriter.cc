@@ -4,6 +4,9 @@
 
 #include "MyDB_PageReaderWriter.h"
 #include "MyDB_PageRecordIterator.h"
+#include <iostream>
+
+using namespace std;
 
 void MyDB_PageReaderWriter :: clear () {
 	PageHeader *header = getPageHeader();
@@ -39,12 +42,13 @@ bool MyDB_PageReaderWriter :: append (MyDB_RecordPtr appendMe) {
 	return true;
 }
 
-void MyDB_PageReaderWriter::overWrite(char* overwriteMe[], int pageSize) {
+void MyDB_PageReaderWriter::overWrite(char* overwriteMe, int pageSize) {
 	PageHeader *header = getPageHeader();
 	header->nextAvailablePlace = 0;
 	header->numBytesUsed = pageSize;
 	header->type = MyDB_PageType :: RegularPage;
-	memcpy((void*)header->bytes[header->nextAvailablePlace], overwriteMe, pageSize);
+	cout << "to copy: " << overwriteMe << endl;
+	memcpy(header->bytes, overwriteMe, pageSize);
 }
 
 PageHeader* MyDB_PageReaderWriter::getPageHeader() {
