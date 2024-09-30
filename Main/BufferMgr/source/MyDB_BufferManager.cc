@@ -21,6 +21,8 @@
 #include <sys/uio.h>
 #include <unistd.h>
 #include <utility>
+#include "MyDB_PageReaderWriter.h"
+#include "MyDB_PageRecordIterator.h"
 
 using namespace std;
 
@@ -289,7 +291,14 @@ MyDB_BufferManager :: MyDB_BufferManager (size_t pageSizeIn, size_t numPagesIn, 
 
 	// create all of the RAM
 	for (size_t i = 0; i < numPages; i++) {
-		availableRam.push_back (malloc (pageSizeIn));
+		void* space = malloc(pageSizeIn);
+		
+		PageHeader *header = (PageHeader*)space;
+		header->nextAvailablePlace = 0;
+		header->numBytesUsed = 0;
+		header->type = MyDB_PageType :: RegularPage;
+		
+		availableRam.push_back (malloc(pageSizeIn));
 	}	
 }
 

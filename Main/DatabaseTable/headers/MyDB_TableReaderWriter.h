@@ -3,6 +3,7 @@
 #define TABLE_RW_H
 
 #include <memory>
+#include <vector>
 #include "MyDB_BufferManager.h"
 #include "MyDB_Record.h"
 #include "MyDB_RecordIterator.h"
@@ -56,6 +57,8 @@ private:
 	MyDB_BufferManagerPtr buffer;
 
 	MyDB_PageReaderWriter *curPageRW;
+	
+
 	size_t curPageId;
 	size_t pageSize;
 };

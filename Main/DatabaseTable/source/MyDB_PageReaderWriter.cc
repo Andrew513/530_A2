@@ -57,11 +57,10 @@ PageHeader* MyDB_PageReaderWriter::getPageHeader() {
 MyDB_PageReaderWriter :: MyDB_PageReaderWriter (long i, MyDB_BufferManagerPtr buffer, MyDB_TablePtr table):index(i), buffer(buffer), table(table) {
 	pageHandler = buffer->getPage(table, index);
 	
-	PageHeader *header = (PageHeader*)pageHandler->getBytes();
-
-	header->nextAvailablePlace = 0;
-	header->numBytesUsed = 0;
-	header->type = MyDB_PageType :: RegularPage;
+	// PageHeader *header = (PageHeader*)pageHandler->getBytes();
+	// header->nextAvailablePlace = 0;
+	// header->numBytesUsed = 0;
+	// header->type = MyDB_PageType :: RegularPage;
 }
 
 #endif
