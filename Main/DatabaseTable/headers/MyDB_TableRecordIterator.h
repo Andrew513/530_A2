@@ -23,7 +23,7 @@ private:
     int curPageId;
     MyDB_RecordPtr record;
     MyDB_TablePtr table;
-    MyDB_PageReaderWriter *curPageWR;
+    shared_ptr<MyDB_PageReaderWriter> curPageWR;
     MyDB_BufferManagerPtr buffer;
     MyDB_RecordIteratorPtr curPageRecIter;
 };

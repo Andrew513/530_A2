@@ -25,8 +25,8 @@ MyDB_PageReaderWriter MyDB_TableReaderWriter::operator[](size_t i) {
 
 	while (i > table->lastPage()) {
 		table->setLastPage(table->lastPage() + 1);
-		MyDB_PageReaderWriter newPage(table->lastPage(), buffer, table);
-		newPage.clear();
+		shared_ptr<MyDB_PageReaderWriter> newPage = make_shared<MyDB_PageReaderWriter>(table->lastPage(), buffer, table);
+		newPage->clear();
 	}
 
 	return MyDB_PageReaderWriter(i, buffer, table);
@@ -40,8 +40,9 @@ MyDB_RecordPtr MyDB_TableReaderWriter :: getEmptyRecord () {
 
 MyDB_PageReaderWriter MyDB_TableReaderWriter :: last () {
 	long lastPageId = table->lastPage();
-	MyDB_PageReaderWriter lastPage(lastPageId, buffer, table); // use lastPageId as parameter
-	return lastPage;	
+	shared_ptr<MyDB_PageReaderWriter> lastPage = make_shared<MyDB_PageReaderWriter>(lastPageId, buffer, table);
+	// cout<<"last page id: "<<lastPageId<<endl;
+	return *lastPage;	
 }
 
 
