@@ -58,7 +58,7 @@ MyDB_PageReaderWriter :: MyDB_PageReaderWriter (long i, MyDB_BufferManagerPtr bu
 	pageHandler = buffer->getPage(table, index);
 	
 	PageHeader *header = (PageHeader*)pageHandler->getBytes();
-	cout << "set to 0\n";
+
 	header->nextAvailablePlace = 0;
 	header->numBytesUsed = 0;
 	header->type = MyDB_PageType :: RegularPage;
