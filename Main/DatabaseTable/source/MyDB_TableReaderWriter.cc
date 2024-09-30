@@ -49,23 +49,42 @@ void MyDB_TableReaderWriter :: append (MyDB_RecordPtr appendMe) {
 }
 
 void MyDB_TableReaderWriter :: loadFromTextFile (string fromMe) {
-	int fd = open(fromMe.c_str(), O_RDONLY);
-	if (fd == -1) {
+	// load a text file into this table... overwrites the current contents
+	ifstream infile(fromMe);
+	if (!infile.is_open()) {
 		cerr << "Failed to open the file: " << fromMe << endl;
 		return;
 	}
 
-	char *readBuffer;
-	readBuffer = (char*)malloc(pageSize);
-	ssize_t bytesRead;
-	long curPageId = 0;
-	while ((bytesRead = read(fd, readBuffer, pageSize)) > 0) {
-		MyDB_PageReaderWriter pageRW(curPageId, buffer, table); // use curPageId to determine which page is pointed to
-		// overwrite page content
-		cout << "copy first: " << readBuffer << endl;
-		pageRW.overWrite(readBuffer, pageSize);
-		curPageId++;
+	MyDB_RecordPtr record = getEmptyRecord();
+
+	string line;
+	while (getline(infile, line)) {
+		record->fromString(line);
+		append(record);
 	}
+
+	infile.close();
+
+
+
+	// int fd = open(fromMe.c_str(), O_RDONLY);
+	// if (fd == -1) {
+	// 	cerr << "Failed to open the file: " << fromMe << endl;
+	// 	return;
+	// }
+
+	// char *readBuffer;
+	// readBuffer = (char*)malloc(pageSize);
+	// ssize_t bytesRead;
+	// long curPageId = 0;
+	// while ((bytesRead = read(fd, readBuffer, pageSize)) > 0) {
+	// 	MyDB_PageReaderWriter pageRW(curPageId, buffer, table); // use curPageId to determine which page is pointed to
+	// 	// overwrite page content
+	// 	cout << "copy first: " << readBuffer << endl;
+	// 	pageRW.overWrite(readBuffer, pageSize);
+	// 	curPageId++;
+	// }
 }
 
 MyDB_RecordIteratorPtr MyDB_TableReaderWriter :: getIterator (MyDB_RecordPtr iterateIntoMe) {
