@@ -36,19 +36,19 @@ void initialize() {
 	mySchema->appendAtt(make_pair("acctbal", make_shared <MyDB_DoubleAttType>()));
 	mySchema->appendAtt(make_pair("comment", make_shared <MyDB_StringAttType>()));
 
-	// cout<<"check ponit 1"<<endl;
+	cout<<"check ponit 1"<<endl;
 
 	// use the schema to create a table
 	MyDB_TablePtr myTable = make_shared <MyDB_Table>("supplier", "supplier.bin", mySchema);
 	MyDB_BufferManagerPtr myMgr = make_shared <MyDB_BufferManager>(1024, 16, "tempFile");
 	MyDB_TableReaderWriter supplierTable(myTable, myMgr);
 
-	// cout<<"check ponit 2"<<endl;
+	cout<<"check ponit 2"<<endl;
 
 	// load it from a text file
 	supplierTable.loadFromTextFile("supplier.tbl");
 
-	// cout<<"check ponit 3"<<endl;
+	cout<<"check ponit 3"<<endl;
 
 	// put the supplier table into the catalog
 	myTable->putInCatalog(myCatalog);

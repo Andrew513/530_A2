@@ -13,6 +13,7 @@ void MyDB_PageReaderWriter :: clear () {
 	header->nextAvailablePlace = 0;
 	header->numBytesUsed = 0;
 	header->type = MyDB_PageType :: RegularPage;
+	pageHandler->wroteBytes();
 }
 
 MyDB_PageType MyDB_PageReaderWriter :: getType () {
@@ -26,6 +27,7 @@ MyDB_RecordIteratorPtr MyDB_PageReaderWriter :: getIterator (MyDB_RecordPtr iter
 
 void MyDB_PageReaderWriter :: setType (MyDB_PageType toMe) {
 	getPageHeader()->type = toMe;
+	pageHandler->wroteBytes();
 }
 
 bool MyDB_PageReaderWriter :: append (MyDB_RecordPtr appendMe) {

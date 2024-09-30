@@ -7,7 +7,7 @@
 
 struct PageHeader {
 	// the next available place to write a record
-	size_t nextAvailablePlace;
+	unsigned nextAvailablePlace;
 	// the number of bytes used on the page
 	size_t numBytesUsed;
 	// the type of the page

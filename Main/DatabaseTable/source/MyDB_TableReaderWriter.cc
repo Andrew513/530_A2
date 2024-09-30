@@ -3,34 +3,37 @@
 #define TABLE_RW_C
 
 #include <fstream>
+#include <sstream>
 #include <fcntl.h>
 #include <unistd.h>
 #include <iostream>
 #include "MyDB_PageReaderWriter.h"
 #include "MyDB_TableReaderWriter.h"
 #include "MyDB_TableRecordIterator.h"
-#include "MyDB_Record.h"
+#include "MyDB_Record.h";
 
 using namespace std;
 
 MyDB_TableReaderWriter :: MyDB_TableReaderWriter (MyDB_TablePtr t, MyDB_BufferManagerPtr bm) : table(t), buffer(bm) {
 	curPageId = 0;
 	pageSize = buffer->getPageSize();
-	curPageRW = new MyDB_PageReaderWriter(curPageId, buffer, table);
+	shared_ptr<MyDB_PageReaderWriter> curPageRW = make_shared<MyDB_PageReaderWriter>(curPageId, buffer, table);
 }
 
-MyDB_PageReaderWriter MyDB_TableReaderWriter :: operator [] (size_t i) {
-	if (i > table->lastPage()) {
-		// set up all of the pages after the old last page to be empty
+// access the i^th page in this file
+MyDB_PageReaderWriter MyDB_TableReaderWriter::operator[](size_t i) {
 
-		return last();
+	while (i > table->lastPage()) {
+		table->setLastPage(table->lastPage() + 1);
+		MyDB_PageReaderWriter newPage(table->lastPage(), buffer, table);
+		newPage.clear();
 	}
-	
-	MyDB_PageReaderWriter temp(i, buffer, table); // use i as parameter to determine pageReaderWriter points to which page
-	return temp;
+
+	return MyDB_PageReaderWriter(i, buffer, table);
 }
 
 MyDB_RecordPtr MyDB_TableReaderWriter :: getEmptyRecord () {
+	//NOTE: can't be nullptr becuase it requires the schema of the table !!!!
 	MyDB_RecordPtr emptyRec = make_shared<MyDB_Record>(table->getSchema());
 	return emptyRec;
 }
@@ -43,55 +46,57 @@ MyDB_PageReaderWriter MyDB_TableReaderWriter :: last () {
 
 
 void MyDB_TableReaderWriter :: append (MyDB_RecordPtr appendMe) {
-	if (table->lastPage() == -1) {
-		table->setLastPage(0);
-	}
+	shared_ptr<MyDB_PageReaderWriter> lastPageRW = make_shared<MyDB_PageReaderWriter>(table->lastPage(), buffer, table);
 
-	MyDB_PageReaderWriter lastPage = last();
-	if (!(lastPage.append(appendMe))) {
-		// no enough space for appending record, need to use a new page
+	while(lastPageRW->append(appendMe) == false) {
+		// create a new page
 		table->setLastPage(table->lastPage() + 1);
-		MyDB_PageReaderWriter newLastPage = last();
-		newLastPage.append(appendMe);
-		return;
+		lastPageRW = make_shared<MyDB_PageReaderWriter>(table->lastPage(), buffer, table);
+		lastPageRW->clear();
+		
 	}
+	// if (!last().append(appendMe)) {
+	// 	cout << "Failed to append record\n";
+	// }
 }
 
 void MyDB_TableReaderWriter :: loadFromTextFile (string fromMe) {
-	// load a text file into this table... overwrites the current contents
-	ifstream infile(fromMe);
-	if (!infile.is_open()) {
-		cout << "Failed to open the file: " << fromMe << endl;
+	ifstream fileStream(fromMe);
+	if (!fileStream.is_open()) {
+		cerr << "Unable to open the file: " << fromMe << endl;
 		return;
 	}
-
-	MyDB_RecordPtr record = getEmptyRecord();
-
-	string line;
-	while (getline(infile, line)) {
+	long currentPageId = 0;
+	long lastPageId = table->lastPage();
+	shared_ptr<MyDB_PageReaderWriter> currentPageRW = make_shared<MyDB_PageReaderWriter>(currentPageId, buffer, table);
+	currentPageRW->clear();
+	string line; 
+	while (getline(fileStream, line)) {
+		MyDB_RecordPtr record = getEmptyRecord();
 		record->fromString(line);
 		append(record);
+		if (currentPageId < lastPageId) {
+			currentPageId++;
+			currentPageRW = make_shared<MyDB_PageReaderWriter>(currentPageId, buffer, table);
+			currentPageRW->clear();
+		}
 	}
-
-	infile.close();
-
-
-
+	fileStream.close();
 	// int fd = open(fromMe.c_str(), O_RDONLY);
 	// if (fd == -1) {
 	// 	cerr << "Failed to open the file: " << fromMe << endl;
 	// 	return;
 	// }
 
-	// char *readBuffer;
-	// readBuffer = (char*)malloc(pageSize);
+	// char readBuffer[pageSize];
 	// ssize_t bytesRead;
-	// long curPageId = 0;
-	// while ((bytesRead = read(fd, readBuffer, pageSize)) > 0) {
+	// long curPageId = 0, lastPageId = table->lastPage();
+	// while ((bytesRead == read(fd, readBuffer, pageSize)) > 0 || curPageId <= lastPageId) {
 	// 	MyDB_PageReaderWriter pageRW(curPageId, buffer, table); // use curPageId to determine which page is pointed to
+		
 	// 	// overwrite page content
-	// 	cout << "copy first: " << readBuffer << endl;
-	// 	pageRW.overWrite(readBuffer, pageSize);
+	// 	// pageRW->overwrite(buffer);
+		
 	// 	curPageId++;
 	// }
 }
@@ -101,7 +106,20 @@ MyDB_RecordIteratorPtr MyDB_TableReaderWriter :: getIterator (MyDB_RecordPtr ite
 }
 
 void MyDB_TableReaderWriter :: writeIntoTextFile (string toMe) {
-	
+	ofstream file(toMe);
+	if (!file.is_open()) {
+		cerr << "Failed to open the file: " << toMe << endl;
+		return;
+	}
+	MyDB_RecordPtr record = getEmptyRecord();
+	MyDB_RecordIteratorPtr recordItr = getIterator(record);
+	while(recordItr->hasNext()) {
+		recordItr->getNext();
+		ostringstream recordStream;
+		recordStream << record;
+		file << recordStream.str() << endl;
+	}
+	file.close();
 }
 
 #endif
