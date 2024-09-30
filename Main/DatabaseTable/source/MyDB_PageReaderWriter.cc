@@ -44,7 +44,7 @@ void MyDB_PageReaderWriter::overWrite(char* overwriteMe[], int pageSize) {
 	header->nextAvailablePlace = 0;
 	header->numBytesUsed = pageSize;
 	header->type = MyDB_PageType :: RegularPage;
-	memcpy(header->bytes, overwriteMe, pageSize);
+	memcpy((void*)header->bytes[header->nextAvailablePlace], overwriteMe, pageSize);
 }
 
 PageHeader* MyDB_PageReaderWriter::getPageHeader() {
