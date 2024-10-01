@@ -32,18 +32,19 @@ void MyDB_PageReaderWriter :: setType (MyDB_PageType toMe) {
 
 bool MyDB_PageReaderWriter :: append (MyDB_RecordPtr appendMe) {
 	if(index == -1) return false;
+
 	PageHeader *header = getPageHeader();
+	if(!header) return false;
+
 	size_t recordSize = appendMe->getBinarySize();
 	size_t pageSize = buffer->getPageSize();
-	if(header->nextAvailablePlace + recordSize > pageSize) {
+
+	if(sizeof(*header) + header->nextAvailablePlace + recordSize > pageSize) {
 		return false;
 	}
 
-	// cout << "rec size: " << recordSize << ", " << pageSize << endl; 
-	// cout << "before append: " << header->nextAvailablePlace << endl;
-	
-	appendMe->toBinary((void*)(header->bytes + header->nextAvailablePlace));
-	header->nextAvailablePlace += recordSize;
+	appendMe->toBinary((char*)(header->bytes + header->nextAvailablePlace));
+	header->nextAvailablePlace = (char*)(header->bytes + header->nextAvailablePlace + recordSize) - (char*)header->bytes;
 	header->numBytesUsed += recordSize;
 	pageHandler->wroteBytes();
 	// table->setLastPage(index);

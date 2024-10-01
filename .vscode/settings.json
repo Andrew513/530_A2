@@ -19,6 +19,7 @@
         "ios": "cpp",
         "system_error": "cpp",
         "filesystem": "cpp",
-        "iosfwd": "cpp"
+        "iosfwd": "cpp",
+        "fstream": "cpp"
     }
 }

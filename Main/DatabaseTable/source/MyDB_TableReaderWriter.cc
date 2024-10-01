@@ -49,10 +49,14 @@ MyDB_PageReaderWriter MyDB_TableReaderWriter :: last () {
 void MyDB_TableReaderWriter :: append (MyDB_RecordPtr appendMe) {
 	shared_ptr<MyDB_PageReaderWriter> lastPageRW = make_shared<MyDB_PageReaderWriter>(table->lastPage(), buffer, table);
 
+	// cout<<"debugging point 1-0" << endl;
 	while(lastPageRW->append(appendMe) == false) {
+		// cout<<"debugging point 1-1" << endl;
 		// create a new page
 		table->setLastPage(table->lastPage() + 1);
+		// cout<<"debugging point 1-2" << endl;
 		lastPageRW = make_shared<MyDB_PageReaderWriter>(table->lastPage(), buffer, table);
+		// cout<<"debugging point 1-3" << endl;
 		lastPageRW->clear();
 		
 	}
@@ -73,33 +77,21 @@ void MyDB_TableReaderWriter :: loadFromTextFile (string fromMe) {
 	currentPageRW->clear();
 	string line; 
 	while (getline(fileStream, line)) {
+		// cout<<"debugging point 1" << endl;
 		MyDB_RecordPtr record = getEmptyRecord();
+		// cout<<"debugging point 2" << endl;
 		record->fromString(line);
+		// cout<<"debugging point 3" << endl;
 		append(record);
+		// cout<<"debugging point 4" << endl;
 		if (currentPageId < lastPageId) {
 			currentPageId++;
 			currentPageRW = make_shared<MyDB_PageReaderWriter>(currentPageId, buffer, table);
 			currentPageRW->clear();
 		}
+		// cout << "debugging point 5" << endl;
 	}
 	fileStream.close();
-	// int fd = open(fromMe.c_str(), O_RDONLY);
-	// if (fd == -1) {
-	// 	cerr << "Failed to open the file: " << fromMe << endl;
-	// 	return;
-	// }
-
-	// char readBuffer[pageSize];
-	// ssize_t bytesRead;
-	// long curPageId = 0, lastPageId = table->lastPage();
-	// while ((bytesRead == read(fd, readBuffer, pageSize)) > 0 || curPageId <= lastPageId) {
-	// 	MyDB_PageReaderWriter pageRW(curPageId, buffer, table); // use curPageId to determine which page is pointed to
-		
-	// 	// overwrite page content
-	// 	// pageRW->overwrite(buffer);
-		
-	// 	curPageId++;
-	// }
 }
 
 MyDB_RecordIteratorPtr MyDB_TableReaderWriter :: getIterator (MyDB_RecordPtr iterateIntoMe) {

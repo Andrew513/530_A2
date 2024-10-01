@@ -58,7 +58,7 @@ void initialize() {
 }
 
 int main(int argc, char *argv[]) {
-	int start = 9;
+	int start = 1;
 	if (argc > 1 && argv[1][0] >= '0' && argv[1][0] <= '9') {
 		start = argv[1][0] - '0';
 	}
